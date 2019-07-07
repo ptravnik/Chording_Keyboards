@@ -4,79 +4,11 @@
 // Right hand: 4 finger buttons and 4 arrow buttons
 // Left thumb: BACK, Shift, Control
 // Right thumb: SPACE, Function, Alt
-// v 6.0 04-Jul-2019
+// v 9.0 04-Jul-2019
 // Tested with Arduino IDE 1.8.9
 // Set the board to Arduiono/Genuino Micro
 // This work is public domain under GNU licence
 //
-#include <Keyboard.h>
-#include <Mouse.h>
-
-#define _CH0 (char)0
-#define _CPS (char)0xC1
-#define _F01 (char)0xC2
-#define _F02 (char)0xC3
-#define _F03 (char)0xC4
-#define _F04 (char)0xC5
-#define _F05 (char)0xC6
-#define _F06 (char)0xC7
-#define _F07 (char)0xC8
-#define _F08 (char)0xC9
-#define _F09 (char)0xCA
-#define _F10 (char)0xCB
-#define _F11 (char)0xCC
-#define _F12 (char)0xCD
-#define _PRN (char)0xCE
-#define _TAB (char)0xB3
-#define _RTN (char)0xB0
-#define _ESC (char)0xB1
-#define _INS (char)0xD1
-#define _DEL (char)0xD4
-#define _PUP (char)0xD3
-#define _PDN (char)0xD6
-#define _HOM (char)0xD2
-#define _END (char)0xD5
-#define _BSP (char)0xB2
-
-#define _UP (char)0xDA
-#define _DOWN (char)0xD9
-#define _LEFT (char)0xD8
-#define _RIGHT (char)0xD7
-
-#define _CTRL (char)0x80
-#define _SHIFT (char)0x81
-#define _ALT (char)0x82
-#define _GUI (char)0x83
-#define _CTRL_R (char)0x84
-#define _SHIFT_R (char)0x85
-#define _ALT_R (char)0x86
-#define _RIGHT_R (char)0x87
-
-#define _MOUSE_DECIMATOR 5
-#define _SCROLL_DELAY1 50
-#define _SCROLL_DELAY4 200
-#define _NULLMOUSE (signed char)0
-#define _MINUSMOUSE (signed char)(-1)
-#define _PLUSMOUSE (signed char)1
-#define _BLINK_PERIOD 250
-#define _SHIFT_RELEASE_TIME 250
-
-// fill here your passwords
-#define _PASSWORD_1 "TypeYourPasswordHere"
-#define _PASSWORD_2 "TypeYourPasswordHere"
-#define _PASSWORD_3 "TypeYourPasswordHere"
-#define _PASSWORD_4 "TypeYourPasswordHere"
-#define _PASSWORD_5 "TypeYourPasswordHere"
-#define _PASSWORD_6 "TypeYourPasswordHere"
-#define _PASSWORD_7 "TypeYourPasswordHere"
-#define _PASSWORD_8 "TypeYourPasswordHere"
-#define _PASSWORD_9 "TypeYourPasswordHere"
-#define _PASSWORD_10 "TypeYourPasswordHere"
-#define _PASSWORD_11 "TypeYourPasswordHere"
-#define _PASSWORD_12 "TypeYourPasswordHere"
-#define _PASSWORD_13 "TypeYourPasswordHere"
-#define _PASSWORD_14 "TypeYourPasswordHere"
-#define _PASSWORD_15 "TypeYourPasswordHere"
 
 // Uncomment for serial debugging
 //#define _DEBUG
@@ -87,90 +19,11 @@
 //#define _DISABLE_MOUSE
 //#define _DISABLE_KEYBOARD
 
-//
-// Safety feature, in case programming goes bananas
-// Stop keyboard while pressing an arrow button while plugging keyboard in
-//
-bool keyboardActive = false;
-
-//
-// Pin assignment
-//
-const int pot_sensorPins[] = {A3, A2, A0, A1};
-const int readPins[] = {15,14,16,10};          // reading pins for each block
-const int writePins[] = {3, 5, 2, 4, 6, 7};    // pins to set the key block
-const int LEDPins[] = {8, 9};                  // LED pins for indicators
-long LED_Blinker_Time = 0;
-bool LED_Blinker = HIGH;
-
-//
-// arrays are used to map values for each of four potentiometers
-//
-int pot_Low[]= {0, 0, 0, 0};
-int pot_Middle[]= {512, 512, 512, 512};  
-int pot_High[]= {1023, 1023, 1023, 1023};  
-int pot_Calibrated_Low[]= {50, -50, 20, 20};  
-int pot_Calibrated_High[]= {-50, 50, -20, -20};  
-signed char pot_Position[4];
-int mouse_Counter = 0;
-
-//
-// arrays are used to map values for each 21 buttons and 2 pedals
-//
-int left[]    = {0, 0, 0, 0};                  // the last reading from each finger group [current code, last code, buttons pressed, max pressed]
-int right[]   = {0, 0, 0, 0};
-bool bottom[] = {false,false,false,false,false,false,false,false};
-bool repeatKeyMode = false; 
-int shiftMode = 0;                             // Control keys
-bool shift_Pressed = false;
-long shift_Pressed_Time = 0;
-bool alt_Pressed = false;
-bool control_Pressed = false;
-int funMode = 0;
-bool fun_Pressed = false;
-long fun_Pressed_Time = 0;
-bool space_L_Pressed = false;
-bool space_R_Pressed = false;
-bool space_L_Consumed = false;
-bool space_R_Consumed = false;
-bool pedal_L_Pressed = false;
-bool pedal_R_Pressed = false;
-bool win_Requested = false;
-int specialMode = 0;
-bool special_Requested  = false;
-bool button_L = false;
-bool button_R = false;
-bool button_M = false;
-
-//
-// Arrays to control arrow buttons
-//
-char arrow_buttons[] = {_CH0, _CH0, _CH0, _CH0};
-const char arrowMap_0[] = {_LEFT,_UP,_DOWN,_RIGHT};
-const char arrowMap_1[] = {_HOM,_PUP,_PDN,_END};
-
-//
-// Button assignments
-//
-const char comKeys[] = {_HOM,_END,_PUP,_PDN,_INS,_RTN,_PRN};
-const char ctrlKeys0[] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
-const char ctrlKeys1[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-
-const char leftMapping[] =  {_CH0, 'e', 'a', 't', 'l', 'p', 's', 'c',_DEL, 'w', 'C','X',_TAB,_ESC, 'C', 'X',
-                             _CH0, 'g', 'r', 'x', 'u', 'b', 'z', 'y', '-',_CH0,_CH0, '_',_CH0,_CH0,_HOM,_CH0,
-                             _CH0, '1', '2', '3', '4', '5', '6', '7', '8', '9',_CH0,_CH0, '9', '.', '0', '9',
-                             _CH0, '6', '7', '8', '9', '-', '0', '0', 'e',_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,
-                             _CH0,_F05,_F04,_F06,_F03, 'L',_F02,_PRN,_INS,_CH0,_CH0,_CH0,_F01,_CH0,_CPS,_CPS,
-                             _CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0};
-const char rightMapping[] = {_CH0, 'i', 'o', 'n', 'r', 'y', 'h', 'k',_BSP, 'q', 'V', 'Z',_RTN,_CH0, 'V', 'Z',
-                              ' ', '[', ']', '<', '%', '^', '>', 'z', ';', 'x',_CH0,_CH0, ';',_CH0,_END,_CPS,
-                             _CH0, ',', '.', '!', '?',_CH0, ':',_CH0, ';',_CH0,_CH0,_CH0, ';',_CH0,_CH0,_CH0,
-                             _CH0, ';', ';',_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,
-                             _CH0,_F07,_F08,_F10,_F09, 'R',_F11,_F12,_CH0,_CH0,_CH0,_CH0,_F11,_CH0,_F05,_F06,
-                             _CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0,_CH0};
-
-// add 136 to the scan code
-const char keypad_buttons[] = {(char)'\352',(char)'\341',(char)'\342',(char)'\343',(char)'\344',(char)'\345',(char)'\346',(char)'\347',(char)'\350',(char)'\351'};
+#include <Keyboard.h>
+#include <Mouse.h>
+#include "keys.h"
+#include "macros.h"
+#include "keyjoy.h"
 
 //
 // Setup code here, to run once:
@@ -775,21 +628,21 @@ bool DecodeTwoHanded()
       if( DecodeStringChord( 8, 15, "False", 0, 0)) return false;
       return true;
     case 11:
-      if( DecodeStringChord( 11, 1, _PASSWORD_1, 0, 0)) return false;
-      if( DecodeStringChord( 11, 2, _PASSWORD_2, 0, 0)) return false;
-      if( DecodeStringChord( 11, 3, _PASSWORD_3, 0, 0)) return false;
-      if( DecodeStringChord( 11, 4, _PASSWORD_4, 0, 0)) return false;
-      if( DecodeStringChord( 11, 5, _PASSWORD_5, 0, 0)) return false;
-      if( DecodeStringChord( 11, 6, _PASSWORD_6, 0, 0)) return false;
-      if( DecodeStringChord( 11, 7, _PASSWORD_7, 0, 0)) return false;
-      if( DecodeStringChord( 11, 8, _PASSWORD_8, 0, 0)) return false;
-      if( DecodeStringChord( 11, 9, _PASSWORD_9, 0, 0)) return false;
-      if( DecodeStringChord( 11, 10, _PASSWORD_10, 0, 0)) return false;
-      if( DecodeStringChord( 11, 11, _PASSWORD_11, 0, 0)) return false;
-      if( DecodeStringChord( 11, 12, _PASSWORD_12, 0, 0)) return false;
-      if( DecodeStringChord( 11, 13, _PASSWORD_13, 0, 0)) return false;
-      if( DecodeStringChord( 11, 14, _PASSWORD_14, 0, 0)) return false;
-      if( DecodeStringChord( 11, 15, _PASSWORD_15, 0, 0)) return false;
+      if( DecodeStringChord( 11, 1, _MACRO_1, 0, 0)) return false;
+      if( DecodeStringChord( 11, 2, _MACRO_2, 0, 0)) return false;
+      if( DecodeStringChord( 11, 3, _MACRO_3, 0, 0)) return false;
+      if( DecodeStringChord( 11, 4, _MACRO_4, 0, 0)) return false;
+      if( DecodeStringChord( 11, 5, _MACRO_5, 0, 0)) return false;
+      if( DecodeStringChord( 11, 6, _MACRO_6, 0, 0)) return false;
+      if( DecodeStringChord( 11, 7, _MACRO_7, 0, 0)) return false;
+      if( DecodeStringChord( 11, 8, _MACRO_8, 0, 0)) return false;
+      if( DecodeStringChord( 11, 9, _MACRO_9, 0, 0)) return false;
+      if( DecodeStringChord( 11, 10, _MACRO_10, 0, 0)) return false;
+      if( DecodeStringChord( 11, 11, _MACRO_11, 0, 0)) return false;
+      if( DecodeStringChord( 11, 12, _MACRO_12, 0, 0)) return false;
+      if( DecodeStringChord( 11, 13, _MACRO_13, 0, 0)) return false;
+      if( DecodeStringChord( 11, 14, _MACRO_14, 0, 0)) return false;
+      if( DecodeStringChord( 11, 15, _MACRO_15, 0, 0)) return false;
       return true;
     case 12:
       if( DecodePlainStringChord( 12, 1, "+", 0, 0)) return false;
@@ -1379,7 +1232,7 @@ void SendRusLat()
 }
 
 //
-// Implements basic Rus-Lat sequence
+// Implements basic Rus-Lat sequence for Windows 10
 //
 void BasicRusLat()
 {
