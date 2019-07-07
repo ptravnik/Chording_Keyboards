@@ -7,7 +7,11 @@ This is the third version of my chording keyboard. The work in progress is descr
 
 [2] Building a chording keyboard.
 This project depository contains:
-(a) the full hardware description as a set of three PCBs and
-(b) the code for Arduino Micro, which drives the entire project. No modification is required at the operating system side; the keyboard works as an off-the-shelf USB keyboard. It has been tested on Windows and Linux extensively.
 
-To order PCBs, simply use Gerber files provided or modify KiCAD files to you liking. To build the firmware, copy the .ino folder and use Arduino IDE to compile and upload (put any macros of your liking into the macros.h file).
+(a) the full electronics description as a set of three PCBs,
+
+(b) A set of CNC files for making a body, and
+
+(c) the code for Arduino Micro, which drives the entire project. No modification is required at the operating system side; the keyboard works as an off-the-shelf USB keyboard. It has been tested on Windows and Linux extensively.
+
+To order PCBs, simply use Gerber files provided or modify KiCAD files to you liking. The body can be machined or laser-cut. To build the firmware, copy the .ino folder and use Arduino IDE to compile and upload (put any macros of your liking into the macros.h file).
