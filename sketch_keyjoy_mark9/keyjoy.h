@@ -1,8 +1,3 @@
-#include <Keyboard.h>
-#include <Mouse.h>
-#include "keys.h"
-#include "macros.h"
-
 //
 // Safety feature, in case programming goes bananas
 // Stop keyboard while pressing an arrow button while plugging keyboard in
@@ -87,23 +82,3 @@ const char rightMapping[] = {_CH0, 'i', 'o', 'n', 'r', 'y', 'h', 'k',_BSP, 'q', 
 
 // add 136 to the scan code
 const char keypad_buttons[] = {(char)'\352',(char)'\341',(char)'\342',(char)'\343',(char)'\344',(char)'\345',(char)'\346',(char)'\347',(char)'\350',(char)'\351'};
-
-//
-// Low-level functions to read pins and set LEDs
-//
-int ReadPin( int i);
-int ReadPinLogical( int i);
-void SetLEDs();
-void SetLED( int i, int mode);
-void WriteLEDs( bool v1, bool v2);
-void Keyboard_press(char key);
-void Keyboard_write(char key);
-void Keyboard_print(String s);
-void Keyboard_release(char key);
-void Mouse_set( bool v, int b);
-void Mouse_move( signed char x, signed char y);
-void Mouse_scroll( signed char w, int wait);
-void NormalizeJoystickToOne( int i);
-void NormalizeJoystickBallistic( int i, int data);
-void SendRusLat();
-void BasicRusLat();
